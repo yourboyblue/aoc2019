@@ -18,10 +18,11 @@ class Robot
     Direction.new(direction: :l, right: :u, left: :d)
   ]
 
-  def initialize(program)
+  def initialize(program, start_color = 0)
     @curr_d = :u
     @visited = [[0,0]]
     @panel_colors = Hash.new { |h, xy| h[xy] = 0 }
+    @panel_colors[current_panel] = start_color
 
     @program_input  = []
     @program_output = []
@@ -31,12 +32,13 @@ class Robot
   def paint
     while true do
       color, turn_d = next_instruction
-      break if color == 99 # computer returned halt
+      break if color == 99 # program returned halt
 
       paint_panel(current_panel, color)
       panel = move(turn(turn_d))
     end
-    @visited
+
+    @panel_colors
   end
 
   def next_instruction
@@ -84,19 +86,39 @@ class Robot
   end
 end
 
+class GridPrinter
+  def self.print(colors)
+    x_min, x_max = colors.keys.map(&:first).minmax
+    y_min, y_max = colors.keys.map(&:last).minmax
+
+    (y_min..y_max).to_a.reverse.each do |y|
+      puts (x_min..x_max).map { |x| colors[[x,y]] == 1 ? '#' : ' '}.join
+    end
+  end
+end
+
 class Day11
   def self.part_1
     new.part_1
   end
 
-  def initialize
-    @program = File.read('input.txt').split(',').map(&:to_i)
-    @robot = Robot.new(@program)
+  def self.part_2
+    new(start_color: 1).part_2
+  end
+
+  def initialize(start_color: 0)
+    program = File.read('input.txt').split(',').map(&:to_i)
+    @robot = Robot.new(program, start_color)
   end
 
   attr_reader :robot
 
   def part_1
-    robot.paint.uniq.length
+    robot.paint.keys.length
+  end
+
+  def part_2
+    colors = robot.paint
+    GridPrinter.print(colors)
   end
 end
