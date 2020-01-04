@@ -23,7 +23,7 @@ class IntComputer
     @op = @mem[@ptr] % 100
 
     case @op
-    when 99 then return
+    when 99 then return output << 99
     when 1
       write(2, reads[0] + reads[1])
     when 2
