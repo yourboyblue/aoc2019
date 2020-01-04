@@ -1,3 +1,6 @@
+# This class is a working part of an aborted first solution to this problem,
+# which generated a spiral path to traverse a grid space from a reference
+# coordinate.
 class SpiralPath
   def self.find(xr:, yr:, c:)
     new(xr, yr, c).path
